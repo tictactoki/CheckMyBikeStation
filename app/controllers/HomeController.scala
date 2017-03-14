@@ -28,7 +28,7 @@ class HomeController @Inject()(ws: WSClient) extends Controller {
   }
 
   def test = Action.async { implicit request =>
-    val f = ws.url("https://api.jcdecaux.com/vls/v1/stations").withQueryString("contract" ->"Paris","apiKey" -> "4e1ea8f55b5fc1c94f07daf7ed84108354f39a10").get()
+    val f = ws.url("https://api.jcdecaux.com/vls/v1/stations").withQueryString("contract" ->"Paris","apiKey" -> "").get()
     f.map{ ws =>
       Ok(ws.json)
     }

@@ -80,7 +80,7 @@ var Api = React.createClass({
                 that.fillPopups(that.state.stations);
             }
         });
-    }
+    },
 
     render: function () {
         return elm('div', {id: this.props.id}, null);
