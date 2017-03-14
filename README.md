@@ -15,7 +15,25 @@ Technologies
 
 [Scala](https://www.scala-lang.org/)
 
+[Bower](https://bower.io/)
+
+TODO
+====
+
+- Fill the Database.
+- Get data from different cities.
+- Get position and display the bike stations around that position
+
 Getting started
 ===============
 
-In development
+Go to public directory and write the command: 
+>```bower update```
+
+Then run sbt at the root directory:
+>```sbt```
+>```run```
+
+Reach the following URL: "localhost:9000/"
+
+Still In development
