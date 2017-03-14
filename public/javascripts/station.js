@@ -110,14 +110,13 @@ var Station = function (apiStation) {
 };
 
 Station.prototype.toString = function () {
-    return "Number: " + this.number +
-        "\nName: " + this.name +
-        "\nAddress: " + this.address +
-        "\nBanking: " + this.banking +
-        "\nBike stands: " + this.bike_stands +
-        "\nAvailable bike stands: " + this.available_bike_stands +
-        "\nAvailable bikes: " + this.available_bikes +
-        "\nLast update: " + new Date(this.last_update);
+    return "<p>Name: " + this.name +
+        "<br/>Address: " + this.address +
+        "<br/>Banking: " + this.banking +
+        "<br/>Bike stands: " + this.bike_stands +
+        "<br/>Available bike stands: " + this.available_bike_stands +
+        "<br/>Available bikes: " + this.available_bikes +
+        "<br/>Last update: " + new Date(this.last_update) + "</p>";
 };
 
 ReactDOM.render(
