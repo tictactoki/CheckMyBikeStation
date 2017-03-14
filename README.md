@@ -27,8 +27,10 @@ TODO
 Getting started
 ===============
 
-Go to public directory and write the command: 
+Go to public/javascript directory and write the command: 
 >```bower update```
+
+It's mandatory to have libs.
 
 Then run sbt at the root directory:
 >```sbt```
