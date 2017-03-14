@@ -34,8 +34,9 @@ It's mandatory to have libs.
 
 Then run sbt at the root directory:
 >```sbt```
+
 >```run```
 
-Reach the following URL: "localhost:9000/"
+Reach the following URL: "localhost:9000/". If you use Linux OS, use Firefox browser preferably.
 
 Still In development
