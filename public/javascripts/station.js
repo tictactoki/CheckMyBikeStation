@@ -68,6 +68,10 @@ var Api = React.createClass({
     },
 
     componentDidMount: function () {
+        this.refresh();
+    },
+
+    refresh: function() {
         var that = this;
         $.get("http://localhost:9000/test", function (data, status, xhr) {
             if (xhr.status == 200 && data != null) {
@@ -76,7 +80,7 @@ var Api = React.createClass({
                 that.fillPopups(that.state.stations);
             }
         });
-    },
+    }
 
     render: function () {
         return elm('div', {id: this.props.id}, null);
