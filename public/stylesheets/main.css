@@ -1,1 +1,11 @@
-#mapid { height: 500px; width: auto }
+#contrainer {
+    height: 100%;
+    width: 100%;
+}
+
+#mapid {
+    position: absolute;
+    top: 20%;
+    height: 80%;
+    width: 100%;
+}

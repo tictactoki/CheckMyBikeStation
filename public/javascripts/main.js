@@ -9,22 +9,26 @@
     id: 'mapbox.streets'
 }).addTo(mymap);*/
 
-var mapUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGljdGFjdG9raSIsImEiOiJjajA4Ym1wamIwMDFpMnFucjJrbWpod3FwIn0.tLoLo9-_hMaQAu--GvVd6A'
-
-var mapBoxAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    'Imagery © <a href="http://mapbox.com">Mapbox</a>'
+var mapUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGljdGFjdG9raSIsImEiOiJjajA4Ym1wamIwMDFpMnFucjJrbWpod3FwIn0.tLoLo9-_hMaQAu--GvVd6A';
+var osm = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
+var mapBoxAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ';
+    //'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+    //'Imagery © <a href="http://mapbox.com">Mapbox</a>'
 
 var popup = new L.LayerGroup();
 
-var icon = L.icon({
-   iconUrl: 'assets/stylesheets/images/layers.png',
-    iconSize: [30,30]
-});
+var Data = function(number,name) {
+    this.number = number;
+    this.name = name;
+};
 
-L.marker([48.856614, 2.352222], {icon: icon}).bindPopup('This is Paris city').addTo(popup);
+Data.prototype.toString = function() {
+    return "number: " + this.number + "\n" + "name: " + this.name;
+}
 
-var streets = L.tileLayer(mapUrl, {id: 'mapbox.streets', attributions: mapBoxAttr});
+var data = new Data(12,"blabla");
+
+var streets = L.tileLayer(osm, {id: 'mapbox.streets', attributions: mapBoxAttr});
 var mymap = L.map('mapid',{
   center: [48.856614, 2.352222],
     zoom: 12,
@@ -36,7 +40,9 @@ var base = {
 };
 
 var pops = {
-    "name": popup
-}
+    "Stations": popup
+};
+
+L.marker([48.856614, 2.352222]).bindPopup(data.toString()).addTo(popup);
 
 L.control.layers(base, pops).addTo(mymap);

@@ -10,7 +10,7 @@ import play.api.libs.json.Json
 case class Position(lat: Double, lng: Double)
 
 object Position {
-  implicit val positionReads = Json.reads[Position]
+  implicit val positionReads = Json.format[Position]
 }
 
 case class ApiStation(number: Int,
@@ -40,5 +40,5 @@ object DBStation {
 }
 
 object ApiStation {
-  implicit val stationReads = Json.reads[ApiStation]
+  implicit val stationReads = Json.format[ApiStation]
 }
