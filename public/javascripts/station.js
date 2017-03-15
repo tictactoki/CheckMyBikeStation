@@ -33,7 +33,7 @@ const Api = React.createClass({
         return {
             city: "Paris",
             position: [48.856614, 2.352222],
-            cities: null,
+            cities: [],
             stations: null,
             base: {
                 "Streets": L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -47,7 +47,12 @@ const Api = React.createClass({
     },
 
     getCities: function () {
-
+        var that = this;
+        $.get("http://localhost:9000/cities", function(data,status,xhr) {
+           if(xhr.status == 200 && data != null) {
+               that.setState({cities: data});
+           }
+        });
     },
 
 
@@ -66,6 +71,10 @@ const Api = React.createClass({
         this.refresh();
     },
 
+    componentWillMount: function() {
+        this.getCities();
+    },
+
     refresh: function () {
         var that = this;
         $.get("http://localhost:9000/test", function (data, status, xhr) {
@@ -77,13 +86,16 @@ const Api = React.createClass({
         });
     },
 
-    cityChange: function(select) {
-
+    cityChange: function(event) {
+        event.preventDefault();
+        console.log(this.state.cities);
+        this.props.map.panTo(new L.LatLng(49.437269, 1.082153));
     },
 
     render: function () {
-        //return elm(Select, {name: "form-field-name", value: this.state.city, options: this.props.cities, onChange: this.refresh, className: "select-city"}, null);
-        return(elm("div", null,null));
+        return(elm("div", null,
+            elm('select', {onClick: this.cityChange}, null))
+        );
     }
 });
 
