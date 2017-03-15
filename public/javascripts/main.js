@@ -10,8 +10,7 @@
 }).addTo(mymap);*/
 
 var mapUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGljdGFjdG9raSIsImEiOiJjajA4Ym1wamIwMDFpMnFucjJrbWpod3FwIn0.tLoLo9-_hMaQAu--GvVd6A';
-var osm = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
-var mapBoxAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ';
+
     //'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
     //'Imagery © <a href="http://mapbox.com">Mapbox</a>'
 

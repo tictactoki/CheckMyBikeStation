@@ -12,6 +12,6 @@
   "dependencies": {
     "jquery": "*",
     "react": "*",
-    "leaflet": "*"
+    "leaflet": "*",
   }
 }

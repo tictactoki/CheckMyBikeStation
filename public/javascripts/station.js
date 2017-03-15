@@ -1,32 +1,33 @@
 /**
  * Created by stephane on 14/03/2017.
  */
+var Position = function (lat, lng) {
+    this.lat = lat;
+    this.lng = lng;
+};
 
+const ParisPosition = new Position(48.856614, 2.352222);
+
+var Map = function (id, pos) {
+    this.osmUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
+    this.mapBoxAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ';
+    this.map = L.map(id, {
+        center: [pos.lat, pos.lng],
+        zoom: 12,
+        layers: [L.tileLayer(this.osmUrl, {
+            id: 'mapbox.streets',
+            attributions: this.mapBoxAttr
+        })]
+    });
+};
+
+var map = new Map('mapid', ParisPosition);
 const elm = React.createElement;
 
 
-var Api = React.createClass({
 
-    /*getDefaultProps: function () {
-        return {
-            osmUrl: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-            mapBoxAttr: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ',
-            id: 'mapid',
-            popupsLayer: new L.LayerGroup(),
-            streets: L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                id: 'mapbox.streets',
-                attributions: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '
-            }),
-            map: L.map('mapid', {
-                center: [48.856614, 2.352222],
-                zoom: 12,
-                layers: [L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                    id: 'mapbox.streets',
-                    attributions: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '
-                })]
-            }),
-        };
-    },*/
+const Api = React.createClass({
+
 
     getInitialState: function () {
         return {
@@ -35,18 +36,13 @@ var Api = React.createClass({
             cities: null,
             stations: null,
             base: {
-              "Streets": L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {id: 'mapbox.streets', attributions: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '})
-            },
-            popup: null,
-            map: L.map('mapid', {
-                center: [48.856614, 2.352222],
-                zoom: 12,
-                layers: [L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                "Streets": L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                     id: 'mapbox.streets',
                     attributions: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '
-                })]
-            }),
-            popupsLayer: new L.LayerGroup()
+                })
+            },
+            popup: null,
+            popupsLayer: [new L.LayerGroup()]
         }
     },
 
@@ -59,11 +55,10 @@ var Api = React.createClass({
         if (this.state.stations != null) {
             var that = this;
             stations.map(function (station) {
-                L.marker([station.position.lat, station.position.lng]).bindPopup(station.toString()).addTo(that.state.popupsLayer);
+                L.marker([station.position.lat, station.position.lng]).bindPopup(station.toString()).addTo(that.state.popupsLayer[0]);
             });
-            this.setState({popup: { "Stations": this.state.popupsLayer}});
-            console.log(this.state.popup);
-            L.control.layers(this.state.base, this.state.popup).addTo(this.state.map);
+            this.setState({popup: {"Stations": this.state.popupsLayer[0]}});
+            L.control.layers(this.state.base, this.state.popup).addTo(this.props.map);
         }
     },
 
@@ -71,7 +66,7 @@ var Api = React.createClass({
         this.refresh();
     },
 
-    refresh: function() {
+    refresh: function () {
         var that = this;
         $.get("http://localhost:9000/test", function (data, status, xhr) {
             if (xhr.status == 200 && data != null) {
@@ -82,8 +77,13 @@ var Api = React.createClass({
         });
     },
 
+    cityChange: function(select) {
+
+    },
+
     render: function () {
-        return elm('div', {id: this.props.id}, null);
+        //return elm(Select, {name: "form-field-name", value: this.state.city, options: this.props.cities, onChange: this.refresh, className: "select-city"}, null);
+        return(elm("div", null,null));
     }
 });
 
@@ -120,10 +120,6 @@ Station.prototype.toString = function () {
 };
 
 ReactDOM.render(
-    elm(Api, {
-        osmUrl: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-        mapBoxAttr: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ',
-        id: 'mapid'
-    }, null),
+    elm(Api, {map: map.map}, null),
     document.getElementById('container')
 );
