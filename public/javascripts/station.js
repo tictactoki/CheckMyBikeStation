@@ -62,6 +62,13 @@ const Api = React.createClass({
     },
 
 
+    removeMarker: function(){
+        var that = this;
+        this.props.map.eachLayer(function(layer){
+           that.props.map.removeLayer(layer);
+        });
+    },
+
     fillPopups: function (stations) {
         if (this.state.stations != null) {
             var that = this;
@@ -84,9 +91,10 @@ const Api = React.createClass({
 
     refresh: function () {
         var that = this;
-        $.get("http://localhost:9000/test", function (data, status, xhr) {
+        $.get("http://localhost:9000/bikes?name=" + this.state.city, function (data, status, xhr) {
             if (xhr.status == 200 && data != null) {
                 var s = new Stations(data);
+                that.removeMarker();
                 that.setState({stations: s.stations});
                 that.fillPopups(that.state.stations);
             }
@@ -95,7 +103,10 @@ const Api = React.createClass({
 
     cityChange: function (event) {
         event.preventDefault();
-        var city = this.state.cities[event.target.value];
+        var value = event.target.value;
+        var city = this.state.cities[value];
+        this.setState({city: value});
+        this.refresh();
         //console.log(this.state.cities);
         this.props.map.panTo(new L.LatLng(city.lat, city.lng));
     },

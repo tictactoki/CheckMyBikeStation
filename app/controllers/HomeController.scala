@@ -42,9 +42,11 @@ class HomeController @Inject()(val ws: WSClient, val reactiveMongoApi: ReactiveM
     Ok(views.html.index())
   }
 
-  def test = Action.async { implicit request =>
-    val f = ws.url("https://api.jcdecaux.com/vls/v1/stations").withQueryString("contract" ->"Paris","apiKey" -> "4e1ea8f55b5fc1c94f07daf7ed84108354f39a10").get()
+  def getStationsFromCity(name: String) = Action.async { implicit request =>
+    val f = ws.url("https://api.jcdecaux.com/vls/v1/stations").withQueryString("contract" -> name,"apiKey" -> "").get()
     f.map{ ws =>
+      println("name " + name)
+      println(ws)
       Ok(ws.json)
     }
   }
