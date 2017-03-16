@@ -25,7 +25,6 @@ var map = new Map('mapid', ParisPosition);
 const elm = React.createElement;
 
 
-
 const Api = React.createClass({
 
 
@@ -33,7 +32,8 @@ const Api = React.createClass({
         return {
             city: "Paris",
             position: [48.856614, 2.352222],
-            cities: [],
+            cities: {},
+            select: [],
             stations: null,
             base: {
                 "Streets": L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -48,10 +48,16 @@ const Api = React.createClass({
 
     getCities: function () {
         var that = this;
-        $.get("http://localhost:9000/cities", function(data,status,xhr) {
-           if(xhr.status == 200 && data != null) {
-               that.setState({cities: data});
-           }
+        $.get("http://localhost:9000/cities", function (data, status, xhr) {
+            if (xhr.status == 200 && data != null) {
+                var map = {};
+                var keys = [];
+                data.forEach(function (city) {
+                    keys.push(city.name);
+                    map[city.name] = {lat: city.lat, lng: city.lng};
+                });
+                that.setState({cities: map, select: keys});
+            }
         });
     },
 
@@ -69,9 +75,10 @@ const Api = React.createClass({
 
     componentDidMount: function () {
         this.refresh();
+        console.log(this.state.select);
     },
 
-    componentWillMount: function() {
+    componentWillMount: function () {
         this.getCities();
     },
 
@@ -86,16 +93,28 @@ const Api = React.createClass({
         });
     },
 
-    cityChange: function(event) {
+    cityChange: function (event) {
         event.preventDefault();
-        console.log(this.state.cities);
-        this.props.map.panTo(new L.LatLng(49.437269, 1.082153));
+        var city = this.state.cities[event.target.value];
+        //console.log(this.state.cities);
+        this.props.map.panTo(new L.LatLng(city.lat, city.lng));
     },
 
     render: function () {
-        return(elm("div", null,
-            elm('select', {onClick: this.cityChange}, null))
-        );
+        var that = this;
+        if (this.state.cities != null && this.state.select != null) {
+            console.log(this.state.select);
+            return (
+                elm("div", null,
+                    elm("select",{onChange:this.cityChange}, this.state.select.map(function (key) {
+                        return elm("option", {value: key}, key);
+                        })
+                    ))
+            );
+        }
+        else {
+            return (elm("div",null,null));
+        }
     }
 });
 
