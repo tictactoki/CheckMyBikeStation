@@ -8,7 +8,7 @@ var Position = function (lat, lng) {
 
 const ParisPosition = new Position(48.856614, 2.352222);
 
-var Map = function (id, pos) {
+const Map = function (id, pos) {
     this.osmUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
     this.mapBoxAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ';
     this.map = L.map(id, {
@@ -53,7 +53,7 @@ const Api = React.createClass({
                 var map = {};
                 var keys = [];
                 data.forEach(function (city) {
-                    keys.push(city.name);
+                    keys.push({name: city.name, code: city.code});
                     map[city.name] = {lat: city.lat, lng: city.lng};
                 });
                 that.setState({cities: map, select: keys});
@@ -101,13 +101,11 @@ const Api = React.createClass({
     },
 
     render: function () {
-        var that = this;
         if (this.state.cities != null && this.state.select != null) {
-            console.log(this.state.select);
             return (
                 elm("div", null,
                     elm("select",{onChange:this.cityChange}, this.state.select.map(function (key) {
-                        return elm("option", {value: key}, key);
+                        return elm("option", {value: key.name}, key.name + " " + key.code);
                         })
                     ))
             );
