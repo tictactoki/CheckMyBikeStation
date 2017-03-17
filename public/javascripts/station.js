@@ -29,9 +29,10 @@ const Api = React.createClass({
 
 
     getInitialState: function () {
+        var group = new L.LayerGroup();
         return {
             city: "Paris",
-            position: [48.856614, 2.352222],
+            //position: [48.856614, 2.352222],
             cities: {},
             select: [],
             stations: null,
@@ -41,8 +42,9 @@ const Api = React.createClass({
                     attributions: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '
                 })
             },
-            popup: null,
-            popupsLayer: [new L.LayerGroup()]
+            markers: {},
+            popupsLayer: group,
+            popup: { "Stations": group}
         }
     },
 
@@ -61,41 +63,29 @@ const Api = React.createClass({
         });
     },
 
-
-    removeMarker: function(){
-        var that = this;
-        this.props.map.eachLayer(function(layer){
-           that.props.map.removeLayer(layer);
-        });
-    },
-
     fillPopups: function (stations) {
         if (this.state.stations != null) {
             var that = this;
+            this.state.popupsLayer.clearLayers();
             stations.map(function (station) {
-                L.marker([station.position.lat, station.position.lng]).bindPopup(station.toString()).addTo(that.state.popupsLayer[0]);
+                L.marker([station.position.lat, station.position.lng]).bindPopup(station.toString()).addTo(that.state.popupsLayer);
             });
-            this.setState({popup: {"Stations": this.state.popupsLayer[0]}});
-            L.control.layers(this.state.base, this.state.popup).addTo(this.props.map);
+            this.forceUpdate();
         }
     },
 
     componentDidMount: function () {
-        this.refresh();
-        console.log(this.state.select);
-    },
-
-    componentWillMount: function () {
         this.getCities();
+        this.refresh(this.state.city);
+        L.control.layers(this.state.base, this.state.popup).addTo(this.props.map);
     },
 
-    refresh: function () {
+    refresh: function (city) {
         var that = this;
-        $.get("http://localhost:9000/bikes?name=" + this.state.city, function (data, status, xhr) {
+        $.get("http://localhost:9000/bikes?name=" + city, function (data, status, xhr) {
             if (xhr.status == 200 && data != null) {
                 var s = new Stations(data);
-                that.removeMarker();
-                that.setState({stations: s.stations});
+                that.setState({city: city, stations: s.stations});
                 that.fillPopups(that.state.stations);
             }
         });
@@ -105,18 +95,21 @@ const Api = React.createClass({
         event.preventDefault();
         var value = event.target.value;
         var city = this.state.cities[value];
-        this.setState({city: value});
-        this.refresh();
+        this.refresh(value);
         //console.log(this.state.cities);
         this.props.map.panTo(new L.LatLng(city.lat, city.lng));
     },
 
     render: function () {
+        var that = this;
         if (this.state.cities != null && this.state.select != null) {
             return (
                 elm("div", null,
                     elm("select",{onChange:this.cityChange}, this.state.select.map(function (key) {
-                        return elm("option", {value: key.name}, key.name + " " + key.code);
+                        if(key.name == that.state.city) {
+                            return elm("option", {value: key.name ,selected: "selected"}, key.name + " " + key.code);
+                        }
+                        else return elm("option", {value: key.name}, key.name + " " + key.code);
                         })
                     ))
             );
@@ -150,8 +143,7 @@ var Station = function (apiStation) {
 };
 
 Station.prototype.toString = function () {
-    return "<p>Name: " + this.name +
-        "<br/>Address: " + this.address +
+    return "<br/>Address: " + this.address +
         "<br/>Banking: " + this.banking +
         "<br/>Bike stands: " + this.bike_stands +
         "<br/>Available bike stands: " + this.available_bike_stands +
@@ -160,6 +152,6 @@ Station.prototype.toString = function () {
 };
 
 ReactDOM.render(
-    elm(Api, {map: map.map}, null),
+    elm(Api, {map: map.map, control: L.control}, null),
     document.getElementById('container')
 );
