@@ -30,7 +30,9 @@ const Api = React.createClass({
 
     getInitialState: function () {
         var group = new L.LayerGroup();
+        var button = elm("button", {value: "refresh", onClick:this.refreshButton}, "Refresh");
         return {
+            button: button,
             city: "Paris",
             //position: [48.856614, 2.352222],
             cities: {},
@@ -100,18 +102,26 @@ const Api = React.createClass({
         this.props.map.panTo(new L.LatLng(city.lat, city.lng));
     },
 
+    refreshButton: function(event) {
+        event.preventDefault();
+        this.refresh(this.state.city);
+    },
+
     render: function () {
         var that = this;
-        if (this.state.cities != null && this.state.select != null) {
+        //var button = elm("button", {value: "refresh", onClick:this.refresh(this.state.city)}, "Refresh");
+        if (this.state.cities != null && this.state.select != null && this.state.button != null) {
             return (
                 elm("div", null,
+                    this.state.button,
                     elm("select",{onChange:this.cityChange}, this.state.select.map(function (key) {
                         if(key.name == that.state.city) {
                             return elm("option", {value: key.name ,selected: "selected"}, key.name + " " + key.code);
                         }
                         else return elm("option", {value: key.name}, key.name + " " + key.code);
                         })
-                    ))
+                    )
+                )
             );
         }
         else {
